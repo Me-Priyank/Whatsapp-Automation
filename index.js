@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,12 +50,11 @@ client.on('disconnected', (reason) => {
 client.initialize();
 
 // Home route
-app.get('/', (req, res) => {
-  res.send('Server is running. Use the /check-birthdays endpoint to test.');
-});
+
 
 // Route to check birthdays instantly
-app.get('/check-birthdays', (req, res) => {
+app.get('/', (req, res) => {
+  res.send('Server is running. Use the /check-birthdays endpoint to test.');
   if (!isClientReady) {
     return res.status(503).json(['WhatsApp client is not ready yet. Please try again later.']);
   }
@@ -64,10 +65,9 @@ app.get('/check-birthdays', (req, res) => {
   studentData.forEach((student) => {
     if (student.birthdate === today) {
       const message = `🎉 Happy Birthday, ${student.name}! 🎂`;
-      const imagePath = `./assets/${student.name}.jpg`; // Path to your image file
+      const imagePath = path.join(__dirname, 'assets', `${student.name}.jpg`); // Path to your image file
 
       // Check if the image file exists before sending the message
-      const fs = require('fs');
       if (fs.existsSync(imagePath)) {
         const media = MessageMedia.fromFilePath(imagePath);
 
