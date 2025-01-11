@@ -25,6 +25,9 @@ let isClientReady = false; // Flag to check if WhatsApp client is ready
 // Set up WhatsApp client with session persistence
 const client = new Client({
   authStrategy: new LocalAuth(),
+  puppeteer: {
+    args: ['--no-sandbox', '--disable-setuid-sandbox'] // Disable sandbox for Railway environment
+  }
 });
 
 client.on('qr', (qr) => {
@@ -50,11 +53,12 @@ client.on('disconnected', (reason) => {
 client.initialize();
 
 // Home route
-
-
-// Route to check birthdays instantly
 app.get('/', (req, res) => {
   res.send('Server is running. Use the /check-birthdays endpoint to test.');
+});
+
+// Route to check birthdays instantly
+app.get('/check-birthdays', (req, res) => {
   if (!isClientReady) {
     return res.status(503).json(['WhatsApp client is not ready yet. Please try again later.']);
   }
