@@ -52,13 +52,12 @@ client.on('disconnected', (reason) => {
 
 client.initialize();
 
-// Home route
-app.get('/', (req, res) => {
-  res.send('Server is running. Use the /check-birthdays endpoint to test.');
-});
+
 
 // Route to check birthdays instantly
-app.get('/check-birthdays', (req, res) => {
+app.get('/', (req, res) => {
+  res.send('Server is running. Use the /check-birthdays endpoint to test.');
+
   if (!isClientReady) {
     return res.status(503).json(['WhatsApp client is not ready yet. Please try again later.']);
   }
