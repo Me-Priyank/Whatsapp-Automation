@@ -131,7 +131,7 @@ app.get('/', async (req, res) => {
     res.json({ messages: messagesSent });
   }
 });
-checkBirthdays();
+setInterval(checkBirthdays,60000);
  
 // Schedule the function to run daily
 // setInterval(checkBirthdays,  6000); 
