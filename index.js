@@ -64,42 +64,48 @@ client.initialize();
 
 
 // Route to check birthdays instantly
-app.get('/', (req, res) => {
+// Route to check birthdays instantly
+app.get('/', async (req, res) => {
   res.send('Server is running. Use the / endpoint to test.');
 
-    if (!isClientReady) {
-      return res.status(503).json(['WhatsApp client is not ready yet. Please try again later.']);
-    }
-  
-    const today = new Date().toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
-    let messagesSent = [];
-  
-    studentData.forEach((student) => {
-      if (student.birthdate === today) {
-        const message = `🎉 Happy Birthday, ${student.name}! 🎂`;
-        const imagePath = `./assets/${student.name}.jpg`; // Path to your image file
-  
-        const media = MessageMedia.fromFilePath(imagePath);
-  
-        client
-          .sendMessage(WHATSAPP_GROUP_ID, media, { caption: message })
-          .then(() => {
-            console.log(`Birthday wish with image sent for ${student.name}.`);
-            messagesSent.push(`Birthday wish with image sent for ${student.name}.`);
-          })
-          .catch((err) => {
-            console.error(`Failed to send message for ${student.name}:`, err);
-            messagesSent.push(`Failed to send message for ${student.name}.`);
-          });
-      }
+  if (!isClientReady) {
+    console.warn('WhatsApp client is not ready yet.');
+    return; // Return immediately after sending the response
+  }
+
+  const today = new Date().toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
+  const messagesSent = [];
+
+  // Create an array of promises for all messages
+  const messagePromises = studentData
+    .filter((student) => student.birthdate === today) // Filter students with today's birthdate
+    .map((student) => {
+      const message = `🎉 Happy Birthday, ${student.name}! 🎂`;
+      const imagePath = `./assets/${student.name}.jpg`; // Path to your image file
+      const media = MessageMedia.fromFilePath(imagePath);
+
+      return client
+        .sendMessage(WHATSAPP_GROUP_ID, media, { caption: message })
+        .then(() => {
+          console.log(`Birthday wish with image sent for ${student.name}.`);
+          messagesSent.push(`Birthday wish with image sent for ${student.name}.`);
+        })
+        .catch((err) => {
+          console.error(`Failed to send message for ${student.name}:`, err);
+          messagesSent.push(`Failed to send message for ${student.name}.`);
+        });
     });
-  
-    if (messagesSent.length === 0) {
-      res.json(['No birthdays today.']);
-    } else {
-      res.json(messagesSent);
-    }
-  });
+
+  // Wait for all promises to resolve
+  await Promise.all(messagePromises);
+
+  if (messagesSent.length === 0) {
+    console.log('No birthdays today.');
+  } else {
+    console.log(messagesSent.join('\n'));
+  }
+});
+
   
 
 // Schedule a daily job to check birthdays at 9 AM
