@@ -10,13 +10,12 @@ const WHATSAPP_GROUP_ID = process.env.WHATSAPP_GROUP_ID; // Replace with actual 
 app.use(cors());
 app.use(express.json());
 
-
 // Hardcoded student data for testing
 let studentData = [
-  { name: 'Priyank', birthdate: '2025-01-09' },
+  { name: 'Priyank', birthdate: '2025-01-11' },
   { name: 'John Doe', birthdate: '2025-02-15' },
-  { name: 'dada', birthdate: '2025-01-09' },
-  { name: 'dada', birthdate: '2025-01-07' }
+  { name: 'dada', birthdate: '2025-01-08' },
+  { name: 'dada', birthdate: '2025-01-11' }
 ];
 
 let isClientReady = false; // Flag to check if WhatsApp client is ready
@@ -67,18 +66,34 @@ app.get('/check-birthdays', (req, res) => {
       const message = `🎉 Happy Birthday, ${student.name}! 🎂`;
       const imagePath = `./assets/${student.name}.jpg`; // Path to your image file
 
-      const media = MessageMedia.fromFilePath(imagePath);
+      // Check if the image file exists before sending the message
+      const fs = require('fs');
+      if (fs.existsSync(imagePath)) {
+        const media = MessageMedia.fromFilePath(imagePath);
 
-      client
-        .sendMessage(WHATSAPP_GROUP_ID, media, { caption: message })
-        .then(() => {
-          console.log(`Birthday wish with image sent for ${student.name}.`);
-          messagesSent.push(`Birthday wish with image sent for ${student.name}.`);
-        })
-        .catch((err) => {
-          console.error(`Failed to send message for ${student.name}:`, err);
-          messagesSent.push(`Failed to send message for ${student.name}.`);
-        });
+        client
+          .sendMessage(WHATSAPP_GROUP_ID, media, { caption: message })
+          .then(() => {
+            console.log(`Birthday wish with image sent for ${student.name}.`);
+            messagesSent.push(`Birthday wish with image sent for ${student.name}.`);
+          })
+          .catch((err) => {
+            console.error(`Failed to send message for ${student.name}:`, err);
+            messagesSent.push(`Failed to send message for ${student.name}.`);
+          });
+      } else {
+        // If no image, just send text
+        client
+          .sendMessage(WHATSAPP_GROUP_ID, message)
+          .then(() => {
+            console.log(`Birthday wish text sent for ${student.name}.`);
+            messagesSent.push(`Birthday wish text sent for ${student.name}.`);
+          })
+          .catch((err) => {
+            console.error(`Failed to send message for ${student.name}:`, err);
+            messagesSent.push(`Failed to send message for ${student.name}.`);
+          });
+      }
     }
   });
 
@@ -89,35 +104,7 @@ app.get('/check-birthdays', (req, res) => {
   }
 });
 
-// Function to check birthdays daily using a 24-hour timer
-function startDailyBirthdayCheck() {
-  setInterval(() => {
-    if (!isClientReady) {
-      console.warn('WhatsApp client is not ready yet. Skipping birthday check.');
-      return;
-    }
-
-    const today = new Date().toLocaleDateString('en-CA');
-
-    studentData.forEach((student) => {
-      if (student.birthdate === today) {
-        const message = `🎉 Happy Birthday, ${student.name}! 🎂`;
-
-        client
-          .sendMessage(WHATSAPP_GROUP_ID, message)
-          .then(() => {
-            console.log(`Birthday wish sent for ${student.name}.`);
-          })
-          .catch((err) => {
-            console.error(`Failed to send message for ${student.name}:`, err);
-          });
-      }
-    });
-  }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-}
-
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  startDailyBirthdayCheck(); // Start the 24-hour timer when the server starts
 });
