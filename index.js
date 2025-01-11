@@ -14,7 +14,7 @@ app.use(express.json());
 // Hardcoded student data for testing
 let studentData = [
   { name: 'priyank', birthdate: '2025-01-12' },
-  { name: 'John Doe', birthdate: '2025-02-15' },
+  { name: 'John Doe', birthdate: '2025-02-12' },
   { name: 'dada', birthdate: '2025-01-08' },
   { name: 'dada', birthdate: '2025-01-12' }
 ];
@@ -131,7 +131,6 @@ app.get('/', async (req, res) => {
     res.json({ messages: messagesSent });
   }
 });
-setInterval(checkBirthdays,60000);
  
 // Schedule the function to run daily
 // setInterval(checkBirthdays,  6000); 
