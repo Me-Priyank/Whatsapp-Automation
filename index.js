@@ -14,11 +14,11 @@ app.use(express.json());
 // Hardcoded student data for testing
 let studentData = [
   { name: 'priyank', birthdate: '2025-01-12' },
-  { name: 'priyank', birthdate: '2025-01-11' },
+  { name: 'priyank', birthdate: '2025-01-14' },
   { name: 'John Doe', birthdate: '2025-02-11' },
   { name: 'John Doe', birthdate: '2025-02-12' },
   { name: 'dada', birthdate: '2025-01-08' },
-  { name: 'dada', birthdate: '2025-01-12' },
+  { name: 'dada', birthdate: '2025-01-14' },
   { name: 'dada', birthdate: '2025-01-11' }
 
 ];
