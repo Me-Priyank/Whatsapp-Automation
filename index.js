@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 
+// setting up today's date
 const date = new Date();
 
 const day = date.getDate();
