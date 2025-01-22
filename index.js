@@ -11,6 +11,15 @@ const WHATSAPP_GROUP_ID = process.env.WHATSAPP_GROUP_ID; // Replace with actual 
 app.use(cors());
 app.use(express.json());
 
+
+const date = new Date();
+
+const day = date.getDate();
+const month = date.getMonth()+1;
+const year = date.getFullYear();
+
+
+
 // Hardcoded student data for testing
 let studentData = [
   { name: 'priyank', birthdate: '2025-01-12' },
@@ -19,8 +28,9 @@ let studentData = [
   { name: 'John Doe', birthdate: '2025-02-12' },
   { name: 'dada', birthdate: '2025-01-08' },
   { name: 'dada', birthdate: '2025-01-14' },
-  { name: 'dada', birthdate: '2025-01-11' }
-
+  { name: 'dada', birthdate: '2025-01-11' },
+  { name: 'dada', birthdate: `${year}-0${month}-${day}` },
+  { name: 'priyank', birthdate: `${year}-0${month}-${day}` }
 ];
 
 let isClientReady = false; // Flag to check if WhatsApp client is ready
