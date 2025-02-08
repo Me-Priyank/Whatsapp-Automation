@@ -22,16 +22,20 @@ Automate sending scheduled messages, including customized text and images, on Wh
    git clone https://github.com/your-username/whatsapp-automation.git
    cd whatsapp-automation
    ```
-2. Install dependencies:
+
+2. Delet these 2 folders:
+  `.wwebjs_auth/session` and `.wwebjs_cache` so that to set up your own whatsapp auth session
+
+3. Install dependencies:
    ```sh
    npm install
    ```
-3. Run the application:
+4. Run the application:
    ```sh
    node index.js
    ```
-4. Scan the QR code displayed in the terminal with WhatsApp Web.
-5. The bot will start running and send messages based on the schedule.
+5. Scan the QR code displayed in the terminal with WhatsApp Web.
+6. The bot will start running and send messages based on the schedule.
 
 
 ## Deployment
